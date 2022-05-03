@@ -30,7 +30,8 @@ class ArticlesView extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (_) => const ArticleView(),
                         settings: RouteSettings(
-                            arguments: state.articles[index].id.toString()),
+                          arguments: state.articles[index],
+                        ),
                       ),
                     );
                   },
@@ -49,8 +50,8 @@ class ArticlesView extends StatelessWidget {
               itemCount: state.articles.length,
               separatorBuilder: (BuildContext context, int index) =>
                   const Divider(
-                    color: Colors.indigo,
-                  ),
+                color: Colors.indigo,
+              ),
             );
           }
           if (state is Error) {

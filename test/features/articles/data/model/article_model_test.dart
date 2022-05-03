@@ -4,11 +4,10 @@ import 'package:articles_app_tdd/features/articles/data/model/article_model.dart
 import 'package:articles_app_tdd/features/articles/domain/entity/article.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-String fixture(String file) =>
-    File('test/fixture/' + file).readAsStringSync();
+String fixture(String file) => File('test/fixture/' + file).readAsStringSync();
 
 void main() {
-  final articleModel =
+  const articleModel =
       ArticleModel(title: 'title', body: 'body', id: 0, userID: 1);
 
   test('Model should be a subclass of entity', () {

@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
-
 import 'package:articles_app_tdd/core/error/exception.dart';
 import 'package:articles_app_tdd/features/article/data/data_source/local_data_source/article_local_data_source.dart';
 import 'package:articles_app_tdd/features/articles/data/model/article_model.dart';
@@ -27,9 +25,8 @@ void main() {
       when(() => mockSharedPreferences!.getString(cacheArticle))
           .thenReturn(json.encode(fixture('article.json')));
       //act
-      final result = await articleLocalDataSource!.getArticleDetail();
-      final articleModel =
-          ArticleModel.fromJson(json.decode(fixture('article.json')));
+      final result = await articleLocalDataSource!.getArticleDetail('1');
+      final articleModel = Map.from(json.decode(fixture('article.json')));
       //assert
       expect(result, equals(articleModel));
     });
@@ -39,7 +36,7 @@ void main() {
       when(() => mockSharedPreferences!.getString(cacheArticle))
           .thenReturn(null);
       //act
-      final result = articleLocalDataSource!.getArticleDetail();
+      final result = articleLocalDataSource!.getArticleDetail('1');
       //assert
       expect(() => result, throwsA(isA<CacheException>()));
     });
@@ -56,6 +53,7 @@ void main() {
       await articleLocalDataSource!.cacheArticleDetail(article);
       //assert
       verify(() => mockSharedPreferences!.setString(cacheArticle, any()));
+      verify(() => mockSharedPreferences!.getString(cacheArticle));
       verifyNoMoreInteractions(mockSharedPreferences);
     });
   });

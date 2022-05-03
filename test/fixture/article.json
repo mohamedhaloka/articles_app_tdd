@@ -1,6 +1,14 @@
 {
-  "userId": 1,
-  "id": 0,
-  "title": "title",
-  "body": "body"
+  "0": {
+    "userId": 1,
+    "id": 0,
+    "title": "title",
+    "body": "body"
+  },
+  "1": {
+    "userId": 1000,
+    "id": 0,
+    "title": "title",
+    "body": "body"
+  }
 }

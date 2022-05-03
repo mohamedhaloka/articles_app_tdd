@@ -30,21 +30,23 @@ void main() {
     networkInfo = MockNetworkInfo();
     articleRepository = ArticleRepositoryImpl(
         networkInfo: networkInfo,
-        articleLocalDataSource: localDataSource,
-        articleRemoteDataSource: remoteDataSource);
+        localData: localDataSource,
+        remoteData: remoteDataSource);
   });
 
   const tArticleId = '1';
-  const articleModel = ArticleModel(id: 0, userID: 0, title: '', body: '');
+  const articleModel = ArticleModel(id: 1, userID: 0, title: '', body: '');
 
   group('CheckNetworkConnection', () {
     test('should return True when connection success', () async {
       //arrange
       when(() => networkInfo!.isConnected).thenAnswer((_) async => true);
-      when(() => remoteDataSource!.getArticleDetail(tArticleId))
+      when(() => remoteDataSource!.getArticleDetail(any()))
           .thenAnswer((_) async => articleModel);
+      when(() => localDataSource!.cacheArticleDetail(articleModel))
+          .thenAnswer((_) async => {});
       //act
-      await articleRepository!.getArticleDetail(tArticleId);
+      await articleRepository!.getArticleDetail(articleModel);
       //assert
       verify(() => networkInfo!.isConnected);
       verifyNoMoreInteractions(networkInfo);
@@ -58,20 +60,22 @@ void main() {
 
     test('should return article detail when connection is true', () async {
       //arrange
-      when(() => remoteDataSource!.getArticleDetail(tArticleId))
+      when(() => remoteDataSource!.getArticleDetail(any()))
           .thenAnswer((_) async => articleModel);
+      when(() => localDataSource!.cacheArticleDetail(articleModel))
+          .thenAnswer((_) async => {});
       //act
-      final result = await articleRepository!.getArticleDetail(tArticleId);
+      final result = await articleRepository!.getArticleDetail(articleModel);
       //assert
       expect(result, equals(const Right(articleModel)));
     });
 
     test('should return [ServerFailure] when remote throw error', () async {
       //arrange
-      when(() => remoteDataSource!.getArticleDetail(tArticleId))
+      when(() => remoteDataSource!.getArticleDetail(any()))
           .thenThrow(ServerException());
       //act
-      final result = await articleRepository!.getArticleDetail(tArticleId);
+      final result = await articleRepository!.getArticleDetail(articleModel);
       //assert
       expect(result, equals(Left(ServerFailure())));
     });
@@ -85,12 +89,12 @@ void main() {
     test('should return article detail from cache when connection is false',
         () async {
       //arrange
-      when(() => localDataSource!.getArticleDetail())
-          .thenAnswer((_) async => articleModel);
+      when(() => localDataSource!.getArticleDetail(any()))
+          .thenAnswer((_) async => {'1': articleModel.toJson()});
       //act
-      final result = await articleRepository!.getArticleDetail(tArticleId);
+      final result = await articleRepository!.getArticleDetail(articleModel);
       //assert
-      verify(()=>localDataSource!.getArticleDetail());
+      verify(() => localDataSource!.getArticleDetail(any()));
       verifyNoMoreInteractions(localDataSource);
       expect(result, equals(const Right(articleModel)));
     });
@@ -98,10 +102,10 @@ void main() {
     test('should return [CacheFailure] when local source throw exception',
         () async {
       //arrange
-      when(() => localDataSource!.getArticleDetail())
+      when(() => localDataSource!.getArticleDetail(any()))
           .thenThrow(CacheException());
       //act
-      final result = await articleRepository!.getArticleDetail(tArticleId);
+      final result = await articleRepository!.getArticleDetail(articleModel);
       //assert
       expect(result, equals(Left(CacheFailure())));
     });

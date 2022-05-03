@@ -4,12 +4,12 @@ import 'package:articles_app_tdd/features/article/domain/repository/article_repo
 import 'package:articles_app_tdd/features/articles/data/model/article_model.dart';
 import 'package:dartz/dartz.dart';
 
-class ArticleUseCase implements UseCase<ArticleModel, ArticleParam> {
+class ArticleUseCase implements UseCase<ArticleModel, ArticleModel> {
   final ArticleRepository? _repository;
   ArticleUseCase(this._repository);
 
   @override
-  Future<Either<Failure, ArticleModel>?> call(ArticleParam params) {
-    return _repository!.getArticleDetail(params.id.toString());
+  Future<Either<Failure, ArticleModel>?> call(ArticleModel articleModel) {
+    return _repository!.getArticleDetail(articleModel);
   }
 }

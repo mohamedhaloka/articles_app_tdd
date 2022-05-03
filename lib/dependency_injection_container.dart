@@ -40,8 +40,8 @@ Future init() async {
 
   //Article
   sl.registerLazySingleton<ArticleRepository>(() => ArticleRepositoryImpl(
-      articleLocalDataSource: sl(),
-      articleRemoteDataSource: sl(),
+      localData: sl(),
+      remoteData: sl(),
       networkInfo: sl()));
 
   ///Use Cases

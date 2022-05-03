@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:articles_app_tdd/core/error/exception.dart';
 import 'package:articles_app_tdd/features/articles/data/model/article_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class ArticleLocalDataSource {
-  Future<ArticleModel> getArticleDetail();
+  Future<Map<String, dynamic>> getArticleDetail(String id);
 
   Future<void> cacheArticleDetail(ArticleModel articleModel);
 }
@@ -16,11 +17,11 @@ class ArticleLocalDataSourceImpl implements ArticleLocalDataSource {
   ArticleLocalDataSourceImpl(this._sharedPreferences);
 
   @override
-  Future<ArticleModel> getArticleDetail() async {
+  Future<Map<String, dynamic>> getArticleDetail(String id) async {
     final result = _sharedPreferences!.getString(cacheArticle);
     if (result != null) {
-      final articleJson = json.decode(result);
-      return ArticleModel.fromJson(json.decode(articleJson));
+      final decodeData = json.decode(result);
+      return Map<String, dynamic>.from(json.decode(decodeData));
     } else {
       throw CacheException();
     }
@@ -28,7 +29,13 @@ class ArticleLocalDataSourceImpl implements ArticleLocalDataSource {
 
   @override
   Future<void> cacheArticleDetail(ArticleModel articleModel) async {
+    String articleId = (articleModel.id ?? 0).toString();
     final articleString = json.encode(articleModel.toJson());
-    await _sharedPreferences!.setString(cacheArticle, articleString);
+    Map articleMap = {};
+    try {
+      articleMap = await getArticleDetail(articleId);
+    } on CacheException {}
+    articleMap[articleId] = articleString;
+    await _sharedPreferences!.setString(cacheArticle, json.encode(articleMap));
   }
 }

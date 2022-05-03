@@ -1,6 +1,7 @@
 import 'package:articles_app_tdd/dependency_injection_container.dart';
 import 'package:articles_app_tdd/features/article/preserntation/bloc/article_bloc.dart';
 import 'package:articles_app_tdd/features/article/preserntation/bloc/article_state.dart';
+import 'package:articles_app_tdd/features/articles/data/model/article_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,9 +10,9 @@ class ArticleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String id = ModalRoute.of(context)!.settings.arguments as String;
+    ArticleModel articleModel = ModalRoute.of(context)!.settings.arguments as ArticleModel;
     return BlocProvider(
-      create: (_) => ArticleBloc(sl())..getArticleDetail(id),
+      create: (_) => ArticleBloc(sl())..getArticleDetail(articleModel),
       child: const ArticleDetail(),
     );
   }

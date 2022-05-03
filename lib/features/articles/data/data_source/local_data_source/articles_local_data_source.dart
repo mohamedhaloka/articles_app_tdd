@@ -19,7 +19,7 @@ class ArticlesLocalDataSourceImpl implements ArticlesLocalDataSource {
   Future<List<ArticleModel>> getLastArticlesData() async {
     final result = _sharedPreferences.getString(cacheArticlesKey);
     if (result != null) {
-      final list = List.from(jsonDecode(json.decode(result)));
+      final list = List.from(jsonDecode(result));
       List<ArticleModel> articles = <ArticleModel>[];
       for (var article in list) {
         articles.add(ArticleModel.fromJson(article));
